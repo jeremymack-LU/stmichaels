@@ -1,11 +1,43 @@
 ---
-title: "stmichaels"
+  title: "Gravestone Locations"
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
 ```{r}
-1 + 1
+#| echo: false
+#| message: false
+#| warning: false
+
+library(mapboxer)
+library(plotKML)
+library(tidyverse)
+
+api.key <- 'pk.eyJ1IjoiamVyZW15bWFjay1sdSIsImEiOiJjbDhuM216NGcwYzgxM3VydzQ2ZDFzdjI2In0.D7zjHzCX5qKm7ix_Q1b6EQ'
+
+gpx.files <- list.files('gpx')
+
+get.points <- function(x){
+gpx <- readGPX(paste0('gpx/',x))
+gpx <- gpx[["waypoints"]]
+return(gpx)
+}
+
+waypoints <- map_dfr(gpx.files, get.points)
+
+waypoints %>%
+#dplyr::mutate(color = ifelse(injured > 0, "red", "yellow")) %>%
+as_mapbox_source(lng = "lon", lat = "lat") %>%
+# Setup a map with the default source above
+mapboxer(
+  center = c(-75.3634, 40.6103),
+  zoom = 17,
+  style = 'mapbox://styles/jeremymack-lu/cl8n6va2i000716n0s48jran6',
+  token = api.key
+) %>%
+# Add a navigation control
+add_navigation_control() %>%
+# Add a layer styling the data of the default source
+add_circle_layer(
+  circle_color = "yellow",
+  circle_radius = 3
+)
 ```
