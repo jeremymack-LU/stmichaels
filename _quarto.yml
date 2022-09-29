@@ -5,9 +5,10 @@ project:
 website:
   title: "St. Michaels Cemetery"
   navbar:
+    search: false
     left:
-      - href: index.qmd
-        text: Home
+      - text: "Map"
+        file: index.qmd
 
 format:
   html:
